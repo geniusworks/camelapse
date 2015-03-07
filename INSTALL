@@ -1,0 +1,95 @@
+Camelapse Installation Instructions
+-----------------------------------
+
+This initial release is intended for people who are running their own private 
+server and have access to the still images already uploaded to it by their 
+camera, and who are reasonably familiar with a Unix command line, and 
+configuring & running scripts as a cron job.  Configuration and use of your 
+camera is outside the scope of this doc.  Please contact your manufacturer's 
+documentation for help with that.
+
+Install required libraries & packages
+-------------------------------------
+
+The main script ("make_movies.pl") expects the following:
+* Date::Manip (install using Perl's cpan installer)
+* File::Basename  (install using Perl's cpan installer)
+* ffmpeg (install using your usual package manager you prefer)
+
+Install main files & folders
+----------------------------
+
+* Move the camelapse folder to your home directory
+* Create target folders in your public_html (htdocs) folder
+  * /camelapse/snap (your camera's still images should go here)
+  * /videos (script-generated movies will go here)
+
+Set configuration values
+------------------------
+
+* Look for the "customizable values" section of make_movies.pl
+* Change any items in {brackets} to your preferred settings
+* Set your camera to record snapshots to filenames as follows:
+
+Format:  {filename_prefix}{YYYYmmdd}-{HHmmss}
+Example: MyWebcamSnap_20150307-090931.jpg
+
+The most important parts are the prefix (typically a name you specify in your 
+camera's software to begin every still image recorded), the date in "YYYYmmdd" 
+format, and the time in "Hhmmss" format.  If you are not sure what these values 
+mean or how to set them in your camera's software, please ask the Internet.  :-)
+
+These filename patterns are important as the script (as of the current release) 
+is looking for filenames based on date so that they can be properly consumed, 
+turned into movies, then rotated out to keep your folders tidy & clean.
+
+Be sure you make any necessary changes in make_movies.pl, too, so that they 
+reflect your settings in your camera's filename preferences.
+
+If you are not sure about any of the specifics, it may be useful to put a few 
+test images into your "{public_path}/camelapse/snap" folder and run the script 
+to make sure everything is processed the way you want.
+
+Set permissions & security
+--------------------------
+
+* Set appropriate write permissions to the various folders so that the script 
+can create and move files as needed.
+* Strongly advised that you set htaccess passwords on the public folders 
+(Web-accessible "{public_path}/camelapse/snap" and "{public_path}/videos") so 
+the general public won't stumble onto your private snapshots and movies.  :-)
+
+Run a test
+----------
+
+* Run the script to make sure everything works
+  * Drop a few still images into your "{public_path}/camelapse/snap" folder
+  * Test filename values for YYYYmmdd should be *yesterday's* date
+  * From the camelapse folder, run:  perl make_movies.pl
+* Movie is generated under /videos -- if not, double check permissions & paths
+* To re-test, you must re-add your test images to {public_path}/camelapse/snap
+
+Set up a daily cron job to run the script
+-----------------------------------------
+
+Now that you've successfully generated a movie, and have set up your camera to 
+regularly upload still images in the proper filename format to 
+{public_path}/camelapse/snap, you should set up a cron job to run the script 
+daily so you can routinely visit your {public_path}/videos folder for daily 
+updated movies (replace "{username}" as needed):
+
+# run daily movie maker for yesterday's webcam still images
+0 1 * * * /usr/bin/perl /home/{username}/camelapse/make_movies.pl 2>&1
+
+Go for a walk or a run
+----------------------
+
+Good!  You're finished.  Now you can come back anytime to visit your 
+http://{your_domain}/videos/ folder (you remembered to password-protect it 
+along with http://{your_domain}/camelapse/snap/, right?) and see the latest 
+daily videos.
+
+Since you've been sitting in your chair a while, time to go out for a walk or a 
+run.  Exercise & stay healthy!  :)
+
++++
